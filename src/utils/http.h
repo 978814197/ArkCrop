@@ -16,7 +16,7 @@ namespace json = boost::json;
  * @param body 响应体
  * @return HTTP 响应对象
  */
-static http::response<http::string_body> make_text(
+http::response<http::string_body> make_text(
     http::status st,
     const http::request<http::string_body>& req,
     std::string body
@@ -29,7 +29,7 @@ static http::response<http::string_body> make_text(
  * @param val JSON 值
  * @return HTTP 响应对象
  */
-static http::response<http::string_body> make_json(
+http::response<http::string_body> make_json(
     http::status st,
     const http::request<http::string_body>& req,
     const json::value& val
