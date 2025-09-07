@@ -1,21 +1,23 @@
 #include "image.h"
 
+#include "utils/http.h"
 
 /**
  * 处理图像裁剪请求
- * @param req HTTP请求
+* @param req 请求对象
  * @return HTTP响应
  */
-asio::awaitable<http::response<http::string_body>> crop_image(const http::request<http::string_body>& req)
+net::awaitable<http::response<http::string_body>> crop_image(const http::request<http::string_body>& req)
 {
-    json::object not_found;
-    not_found["code"] = 404;
-    not_found["msg"] = "not found";
-    http::response<http::string_body> res{http::status::ok, 11};
-    res.set(http::field::content_type, "application/json; charset=utf-8");
-    res.set(http::field::server, "asio-beast");
-    res.keep_alive(req.keep_alive());
-    res.body() = json::serialize(not_found);
-    res.prepare_payload();
-    co_return res;
+    // 解析请求体
+    json::value v;
+    try
+    {
+        v = json::parse(req.body());
+    }
+    catch (...)
+    {
+        co_return make_text(http::status::bad_request, req, "bad request");
+    }
+    co_return make_json(http::status::ok, req, v);
 }

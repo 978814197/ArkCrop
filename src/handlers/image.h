@@ -4,13 +4,14 @@
 #include <boost/asio/awaitable.hpp>
 #include <boost/json.hpp>
 
-namespace http = boost::beast::http;
-namespace asio = boost::asio;
+namespace beast = boost::beast;
+namespace http = beast::http;
+namespace net = boost::asio;
 namespace json = boost::json;
 
 /**
 * 处理图像裁剪请求
-* @param req HTTP请求
+* @param req 请求对象
 * @return HTTP响应
 */
-asio::awaitable<http::response<http::string_body>> crop_image(const http::request<http::string_body>& req);
+net::awaitable<http::response<http::string_body>> crop_image(const http::request<http::string_body>& req);
