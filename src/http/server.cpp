@@ -22,7 +22,7 @@ using tcp = net::ip::tcp;
  * @param req 请求对象
  * @return 响应对象
  */
-static http::response<http::string_body> handle_request(http::request<http::string_body>&& req)
+static net::awaitable<http::response<http::string_body>> handle_request(http::request<http::string_body>&& req)
 {
     // 请求路径
     const std::string target{req.target()};
@@ -32,18 +32,18 @@ static http::response<http::string_body> handle_request(http::request<http::stri
     {
         auto r = make_text(http::status::method_not_allowed, req, "method not allowed");
         r.set(http::field::allow, "POST");
-        return r;
+        co_return r;
     }
 
     // 只允许 / 其他404
     if (target != "/")
     {
-        return make_text(http::status::not_found, req, "not found");
+        co_return make_text(http::status::not_found, req, "not found");
     }
 
     // 调用函数
-    // return crop_image(req);
-    return make_text(http::status::ok, req, "OK");
+    auto res = co_await crop_image(req);
+    co_return res;
 }
 
 /**
@@ -65,13 +65,13 @@ static net::awaitable<void> http_session(tcp::socket sock)
             co_await http::async_read(stream, buffer, req, net::use_awaitable);
 
             // 路由处理，生成响应
-            auto res = handle_request(std::move(req));
+            auto res = co_await handle_request(std::move(req));
 
             // 写回响应
             co_await http::async_write(stream, res, net::use_awaitable);
 
             // 按 keep-alive 语义决定是否关闭
-            if (!res.keep_alive()) break;
+            if (!req.keep_alive()) break;
         }
     }
     catch (const beast::system_error& se)
