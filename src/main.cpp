@@ -1,5 +1,6 @@
 #include "common/logger.h"
 #include "common/args.h"
+#include "http/server.h"
 
 int main(const int argc, char** argv)
 {
@@ -10,10 +11,9 @@ int main(const int argc, char** argv)
 
     // 初始化日志系统
     init_logging(opt.log_level);
+    // 记录启动横幅
+    log_startup_banner(opt);
 
-
-    BOOST_LOG_TRIVIAL(info) << "host:" << opt.host;
-    BOOST_LOG_TRIVIAL(info) << "port:" << opt.port;
-    BOOST_LOG_TRIVIAL(info) << "thread:" << opt.threads;
-    BOOST_LOG_TRIVIAL(info) << "level:" << opt.log_level;
+    // 启动 HTTP 服务器
+    run_server(opt.host, opt.port);
 }

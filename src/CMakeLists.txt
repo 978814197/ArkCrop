@@ -10,6 +10,8 @@ add_library(
         common/args.h
         http/server.cpp
         http/server.h
+        handlers/image.cpp
+        handlers/image.h
 )
 
 # 让库的使用者（例如本工程里的可执行程序）能找到这些头文件
