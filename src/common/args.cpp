@@ -33,7 +33,7 @@ void parse_args(const int argc, char** argv, AppOptions& opt)
         po::value<unsigned short>()
         ->value_name("PORT")
         ->default_value(opt.port)
-        ->notifier([&](unsigned short v)
+        ->notifier([&](const unsigned short v)
         {
             if (v == 0 || v > 65535)
                 throw po::validation_error(po::validation_error::invalid_option_value, "port");
@@ -59,7 +59,7 @@ void parse_args(const int argc, char** argv, AppOptions& opt)
         po::value<trivial::severity_level>()
         ->value_name("LEVEL")
         ->default_value(opt.log_level, "info")
-        ->notifier([&](trivial::severity_level v)
+        ->notifier([&](const trivial::severity_level v)
         {
             opt.log_level = v;
         }),
